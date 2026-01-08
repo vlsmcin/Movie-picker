@@ -5,7 +5,7 @@
 
 <template>
     <HomeHeader />
-    <MovieCard class="card" link="https://via.placeholder.com/150" moviename="Sample Movie" />
+    <MovieCard class="card" link="https://image.tmdb.org/t/p/w500/a26cQPRhJPX6GbWfQbvZdrrp9j9.jpg" moviename="Clube da Luta" />
 </template>
 
 <style>
