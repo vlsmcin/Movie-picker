@@ -1,7 +1,3 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
     <header class="home-header">
         <a>Escolher filme</a>
