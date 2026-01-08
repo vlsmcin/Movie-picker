@@ -31,7 +31,6 @@
     }
 
     a:hover {
-        cursor: pointer;
         color: var(--color-primary);
     }
 
