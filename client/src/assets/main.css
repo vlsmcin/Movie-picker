@@ -15,6 +15,12 @@ a,
   padding: 3px;
 }
 
+h2 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--color-text);
+}
+
 @media (hover: hover) {
   a:hover {
     transform: scale(1.05);

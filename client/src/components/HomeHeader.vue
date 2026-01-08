@@ -16,12 +16,12 @@
         max-height: 100px;
         padding: 1rem 2rem;
         max-width: 1200px;
-        border-bottom: 2px solid var(--color-text);
+        border-bottom: 2px solid rgba(0, 128, 0, 0.2);
         border-radius: 10%;
     }
 
     a {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
         font-weight: bold;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
