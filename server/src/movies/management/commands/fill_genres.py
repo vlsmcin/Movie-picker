@@ -19,6 +19,7 @@ class Command(BaseCommand):
         
         try:
             response = requests.get(url, headers=headers)
+            response.raise_for_status()
             data = response.json()
 
             for genre in data['genres']:
@@ -26,9 +27,5 @@ class Command(BaseCommand):
                 g.save()
 
             self.stdout.write(self.style.SUCCESS("Genres filled successfully."))
-        except Exception as e:
+        except requests.exceptions.RequestException as e:
             self.stdout.write(self.style.ERROR(f"An error occurred while filling genres: {str(e)}"))
-    
-    
-if __name__ == "__main__":
-    fill_genres()
