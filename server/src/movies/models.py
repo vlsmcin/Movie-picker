@@ -8,13 +8,13 @@ API_URL = "https://api.themoviedb.org/3"
 class Movie(models.Model):
     tmdb_id = models.IntegerField(unique=True)
     title = models.CharField(max_length=200)
-    overview = models.TextField()
-    vote_average = models.FloatField()
-    vote_count = models.IntegerField()
-    release_date = models.DateField()
-    popularity = models.FloatField()
-    poster_path = models.CharField(max_length=200)
-    genres = models.ManyToManyField('Genre', related_name='movies')
+    overview = models.TextField(null=True, blank=True)
+    vote_average = models.FloatField(null=True, blank=True)
+    vote_count = models.IntegerField(null=True, blank=True)
+    release_date = models.DateField(null=True, blank=True)
+    popularity = models.FloatField(null=True, blank=True)
+    poster_path = models.CharField(max_length=200, null=True, blank=True)
+    genres = models.ManyToManyField('Genre', related_name='movies', blank=True)
 
     def __str__(self):
         return self.title

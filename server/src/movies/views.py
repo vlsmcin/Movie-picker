@@ -11,6 +11,9 @@ headers = {
     "Authorization": f"Bearer {os.getenv('TMDB_API_KEY')}"
 }
 
+def parse_date(date_str):
+    return date_str if date_str else None
+
 def get_movie_by_title(request, movie_title):
     movies = Movie.objects.filter(title__icontains=movie_title)
 
@@ -42,7 +45,7 @@ def get_movie_by_title(request, movie_title):
                             'overview': mv['overview'],
                             'vote_average': mv['vote_average'],
                             'vote_count': mv['vote_count'],
-                            'release_date': mv['release_date'],
+                            'release_date': parse_date(mv['release_date']),
                             'popularity': mv['popularity'],
                             'poster_path': mv['poster_path']
                         }
