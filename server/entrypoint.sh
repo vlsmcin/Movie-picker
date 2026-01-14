@@ -9,6 +9,7 @@ done
 
 echo "Database is ready!"
 
+python manage.py makemigrations
 python manage.py migrate
 python manage.py fill_genres
 
