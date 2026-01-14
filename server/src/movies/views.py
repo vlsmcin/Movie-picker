@@ -15,6 +15,9 @@ def parse_date(date_str):
     return date_str if date_str else None
 
 def get_movie_by_title(request, movie_title):
+    if request.method != "GET":
+        return JsonResponse({'error': 'Invalid HTTP method'}, status=405)
+
     movies = Movie.objects.filter(title__icontains=movie_title)
 
     if movies.exists():
