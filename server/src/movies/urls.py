@@ -1,6 +1,6 @@
 from django.urls import path
-from . import views
+from .views import MovieByTitleView
 
 urlpatterns = [
-    path("<str:movie_title>/", views.get_movie_by_title, name="get_movie_by_title"),
+    path("<str:movie_title>/", MovieByTitleView.as_view(), name="get_movie_by_title"),
 ]
