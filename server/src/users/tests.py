@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.urls import reverse
 
 # Create your tests here.
 class UserTests(TestCase):
@@ -6,7 +7,7 @@ class UserTests(TestCase):
         """
         Test to ensure that a user can be created successfully.
         """
-        response = self.client.post('/api/v1/users/', {
+        response = self.client.post(reverse('user-create'), {
             'username': 'testuser',
             'email': 'testuser@example.com',
             'password': 'securepassword123'
@@ -20,7 +21,7 @@ class UserTests(TestCase):
         """
         Test to ensure that user creation fails when required fields are missing.
         """
-        response = self.client.post('/api/v1/users/', {
+        response = self.client.post(reverse('user-create'), {
             'username': 'testuser',
             'password': 'securepassword123'
         })
@@ -31,7 +32,7 @@ class UserTests(TestCase):
         """
         Test to ensure that user creation fails when password is missing.
         """
-        response = self.client.post('/api/v1/users/', {
+        response = self.client.post(reverse('user-create'), {
             'username': 'testuser',
             'email': 'testuser@example.com'
         })
