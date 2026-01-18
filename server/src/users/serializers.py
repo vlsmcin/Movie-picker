@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import User
+from movies.serializers import MovieSerializer
+from .models import User, UserMovies
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -17,4 +18,14 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
 
+class UserMoviesSerializer(serializers.ModelSerializer):
+    movie = MovieSerializer(read_only=True)
+
+    class Meta:
+        model = UserMovies
+        fields = [
+            'movie',
+            'watched',
+            'in_watchlist'
+        ]
     
