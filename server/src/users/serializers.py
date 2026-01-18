@@ -4,6 +4,7 @@ from .models import User, UserMovies
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    email = serializers.EmailField(required=True)
     
     class Meta:
         model = User
