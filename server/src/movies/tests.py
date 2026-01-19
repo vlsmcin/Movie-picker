@@ -94,6 +94,26 @@ class MovieTests(TestCase):
 
         self.assertContains(response, "Unknown Movie")
 
+    def test_multiple_genre_names(self):
+        """
+        Test to ensure that a movie with multiple genres returns all genre names.
+        """
+        genre1 = Genre.objects.create(tmdb_id=28, name="Action")
+        genre2 = Genre.objects.create(tmdb_id=12, name="Adventure")
+
+        movie = Movie.objects.create(
+            tmdb_id=100,
+            title="Action Adventure Movie"
+        )
+        movie.genres.add(genre1, genre2)
+
+        response = self.client.get(
+            reverse('get_movie_by_title', args=['Action Adventure Movie'])
+        )
+
+        self.assertContains(response, "Action")
+        self.assertContains(response, "Adventure")
+
 class GenreTests(TestCase):
     def test_all_genres_registered(self):
         """
