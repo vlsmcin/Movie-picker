@@ -4,9 +4,12 @@ from .serializers import UserSerializer, UserMoviesSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 
 # Create your views here.
 class UserCreateView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -19,21 +22,15 @@ class UserCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class UserMoviesView(APIView):
-    def get(self, request, user_id):
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    def get(self, request):
+        user = User.objects.get(id=request.user.id)
         
         user_movies = UserMovies.objects.filter(user=user).select_related('movie')
         serializer = UserMoviesSerializer(user_movies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    def post(self, request, user_id):
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    def post(self, request):
+        user = User.objects.get(id=request.user.id)
         
         movie_id = request.data.get("movie_id")
         if not movie_id:
@@ -65,11 +62,8 @@ class UserMoviesView(APIView):
         serializer = UserMoviesSerializer(user_movie)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
-    def delete(self, request, user_id):
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    def delete(self, request):
+        user = User.objects.get(id=request.user.id)
         
         movie_id = request.query_params.get("movie_id")
         if not movie_id:
@@ -83,11 +77,8 @@ class UserMoviesView(APIView):
         user_movies.delete()
         return Response({"detail": "Movie removed from user"}, status=status.HTTP_200_OK)
 
-    def patch(self, request, user_id):
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    def patch(self, request):
+        user = User.objects.get(id=request.user.id)
         
         movie_id = request.data.get("movie_id")
         if not movie_id:
