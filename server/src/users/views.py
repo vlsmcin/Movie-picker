@@ -39,6 +39,9 @@ class UserMoviesView(APIView):
         if not movie_id:
             return Response({"detail": "movie_id is required"}, status=status.HTTP_400_BAD_REQUEST)
         
+        if UserMovies.objects.filter(user=user, movie__id=movie_id).exists():
+            return Response({"detail": "Movie already associated with user"}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
             movie = Movie.objects.get(id=movie_id)
         except Movie.DoesNotExist:
@@ -68,7 +71,7 @@ class UserMoviesView(APIView):
         except User.DoesNotExist:
             return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
         
-        movie_id = request.data.get("movie_id")
+        movie_id = request.query_params.get("movie_id")
         if not movie_id:
             return Response({"detail": "movie_id is required"}, status=status.HTTP_400_BAD_REQUEST)
         
