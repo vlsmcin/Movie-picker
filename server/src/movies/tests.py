@@ -1,10 +1,29 @@
-from django.test import TestCase
+from rest_framework.test import APITestCase
+from users.models import User
 from .models import Movie, Genre
 from django.core.management import call_command
 from django.urls import reverse
 
 # Create your tests here.
-class MovieTests(TestCase):
+class MovieTests(APITestCase):
+    def setUp(self):
+        """
+        Set up authentication for the tests.
+        """
+        self.user = User.objects.create_user(
+            username='movielover',
+            email='movielover@example.com',
+            password='movieloverpassword'
+        )
+
+        response = self.client.post(reverse('user-login'), {
+            'username': 'movielover',
+            'password': 'movieloverpassword'
+        })
+
+        self.token = response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
+
     def test_single_movie_found(self):
         """
         Test to ensure that a single movie can be found by title.
@@ -114,7 +133,7 @@ class MovieTests(TestCase):
         self.assertContains(response, "Action")
         self.assertContains(response, "Adventure")
 
-class GenreTests(TestCase):
+class GenreTests(APITestCase):
     def test_all_genres_registered(self):
         """
         Test to ensure that all genres are registered in the database.

@@ -1,10 +1,10 @@
-from django.test import TestCase
+from rest_framework.test import APITestCase
 from django.urls import reverse
 from movies.models import Movie
 from .models import User, UserMovies
 
 # Create your tests here.
-class UserTests(TestCase):
+class UserTests(APITestCase):
     def test_create_user(self):
         """
         Test to ensure that a user can be created successfully.
@@ -59,31 +59,32 @@ class UserTests(TestCase):
 
         self.assertEqual(response.status_code, 400)
 
-class UserMoviesTests(TestCase):
+class UserMoviesTests(APITestCase):
     def setUp(self):
         """
-        Set up a user and some movies for testing.
+        Set up a user and authenticate for the tests.
         """
         self.user = User.objects.create_user(
             username='movielover',
             email='movielover@example.com',
             password='movieloverpassword'
         )
+
+        response = self.client.post(reverse('user-login'), {
+            'username': 'movielover',
+            'password': 'movieloverpassword'
+        })
+
+        self.token = response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
     
     def test_get_user_movies_empty(self):
         """
         Test to ensure that getting movies for a user with no movies returns an empty list.
         """
-        response = self.client.get(reverse('user-movies', args=[self.user.id]))
+        response = self.client.get(reverse('user-movies'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, [])
-    
-    def test_get_user_movies_invalid_user(self):
-        """
-        Test to ensure that getting movies for a non-existent user returns 404.
-        """
-        response = self.client.get(reverse('user-movies', args=[9999]))
-        self.assertEqual(response.status_code, 404)
 
     def test_get_user_movies(self):
         """
@@ -109,7 +110,7 @@ class UserMoviesTests(TestCase):
         UserMovies.objects.create(user=self.user, movie=movie1, watched=True, in_watchlist=False)
         UserMovies.objects.create(user=self.user, movie=movie2, watched=False, in_watchlist=True)
 
-        response = self.client.get(reverse('user-movies', args=[self.user.id]))
+        response = self.client.get(reverse('user-movies'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
     
@@ -117,27 +118,8 @@ class UserMoviesTests(TestCase):
         """
         Test to ensure that adding a movie without providing movie_id returns 400.
         """
-        response = self.client.post(reverse('user-movies', args=[self.user.id]), {})
+        response = self.client.post(reverse('user-movies'), {})
         self.assertEqual(response.status_code, 400)
-
-    def test_add_movie_to_invalid_user(self):
-        """
-        Test to ensure that adding a movie to a non-existent user returns 404.
-        """
-        movie = Movie.objects.create(
-            tmdb_id=1,
-            title="Test Movie",
-            overview="A movie for testing.",
-            vote_average=8.5,
-            release_date="2023-01-01",
-            poster_path="/testposter.jpg"
-        )
-
-        response = self.client.post(reverse('user-movies', args=[9999]), {
-            'movie_id': movie.id
-        })
-
-        self.assertEqual(response.status_code, 404)
 
     def test_duplicate_add_movie_to_user(self):
         """
@@ -151,8 +133,8 @@ class UserMoviesTests(TestCase):
                 release_date="2023-01-01",
                 poster_path="/testposter.jpg"
             )
-
-        response = self.client.post(reverse('user-movies', args=[self.user.id]), {
+        
+        response = self.client.post(reverse('user-movies'), {
             'movie_id': movie.id,
             'watched': True,
             'in_watchlist': False
@@ -160,7 +142,7 @@ class UserMoviesTests(TestCase):
 
         self.assertEqual(response.status_code, 201)
 
-        response = self.client.post(reverse('user-movies', args=[self.user.id]), {
+        response = self.client.post(reverse('user-movies'), {
             'movie_id': movie.id,
             'watched': False,
             'in_watchlist': True
@@ -172,7 +154,7 @@ class UserMoviesTests(TestCase):
         """
         Test to ensure that adding a non-existent movie to a user returns 404.
         """
-        response = self.client.post(reverse('user-movies', args=[self.user.id]), {
+        response = self.client.post(reverse('user-movies'), {
             'movie_id': 9999
         })
 
@@ -191,7 +173,7 @@ class UserMoviesTests(TestCase):
             poster_path="/testposter.jpg"
         )
 
-        response = self.client.post(reverse('user-movies', args=[self.user.id]), {
+        response = self.client.post(reverse('user-movies'), {
             'movie_id': movie.id
         })
 
@@ -210,7 +192,7 @@ class UserMoviesTests(TestCase):
             poster_path="/testposter.jpg"
         )
 
-        response = self.client.post(reverse('user-movies', args=[self.user.id]), {
+        response = self.client.post(reverse('user-movies'), {
             'movie_id': movie.id,
             'watched': True,
             'in_watchlist': False
@@ -236,26 +218,7 @@ class UserMoviesTests(TestCase):
         )
 
         response = self.client.delete(
-            reverse('user-movies', args=[self.user.id]) + f'?movie_id={movie.id}'
-        )
-
-        self.assertEqual(response.status_code, 404)
-    
-    def test_remove_movie_from_invalid_user(self):
-        """
-        Test to ensure that removing a movie from a non-existent user returns 404.
-        """
-        movie = Movie.objects.create(
-            tmdb_id=3,
-            title="Yet Another Test Movie",
-            overview="Yet another movie for testing.",
-            vote_average=6.5,
-            release_date="2023-03-01",
-            poster_path="/yetanothertestposter.jpg"
-        )
-
-        response = self.client.delete (
-            reverse('user-movies', args=[9999]) + f'?movie_id={movie.id}'
+            reverse('user-movies') + f'?movie_id={movie.id}'
         )
 
         self.assertEqual(response.status_code, 404)
@@ -276,7 +239,7 @@ class UserMoviesTests(TestCase):
         UserMovies.objects.create(user=self.user, movie=movie, watched=True, in_watchlist=True)
 
         response = self.client.delete(
-            reverse('user-movies', args=[self.user.id]) + f'?movie_id={movie.id}'
+            reverse('user-movies') + f'?movie_id={movie.id}'
         )
 
         self.assertEqual(response.status_code, 200)
@@ -286,7 +249,7 @@ class UserMoviesTests(TestCase):
         """
         Test to ensure that removing a movie without providing movie_id returns 400.
         """
-        response = self.client.delete(reverse('user-movies', args=[self.user.id]))
+        response = self.client.delete(reverse('user-movies'))
         self.assertEqual(response.status_code, 400)
 
     def test_patch_movie_flags(self):
@@ -304,7 +267,7 @@ class UserMoviesTests(TestCase):
 
         UserMovies.objects.create(user=self.user, movie=movie, watched=False, in_watchlist=True)
 
-        response = self.client.patch(reverse('user-movies', args=[self.user.id]), {
+        response = self.client.patch(reverse('user-movies'), {
             'movie_id': movie.id,
             'watched': True
             },
@@ -316,33 +279,11 @@ class UserMoviesTests(TestCase):
         self.assertTrue(response.data['in_watchlist'])
         self.assertTrue(UserMovies.objects.filter(user=self.user, movie=movie, watched=True).exists())
 
-    def test_patch_movie_flags_invalid_user(self):
-        """
-        Test to ensure that updating flags for a non-existent user returns 404.
-        """
-        movie = Movie.objects.create(
-            tmdb_id=6,
-            title="Invalid User Patch Movie",
-            overview="A movie for testing invalid user patch.",
-            vote_average=4.5,
-            release_date="2023-06-01",
-            poster_path="/invaliduserpatchmovieposter.jpg"
-        )
-
-        response = self.client.patch(reverse('user-movies', args=[9999]), {
-            'movie_id': movie.id,
-            'watched': True
-            },
-            content_type='application/json'
-        )
-
-        self.assertEqual(response.status_code, 404)
-
     def test_patch_movie_flags_nonexistent_movie(self):
         """
         Test to ensure that updating flags for a non-existent movie returns 404.
         """
-        response = self.client.patch(reverse('user-movies', args=[self.user.id]), {
+        response = self.client.patch(reverse('user-movies'), {
             'movie_id': 9999,
             'watched': True
             },
@@ -366,7 +307,7 @@ class UserMoviesTests(TestCase):
 
         UserMovies.objects.create(user=self.user, movie=movie, watched=False, in_watchlist=False)
 
-        response = self.client.patch(reverse('user-movies', args=[self.user.id]), {
+        response = self.client.patch(reverse('user-movies'), {
             'movie_id': movie.id
             },
             content_type='application/json'
