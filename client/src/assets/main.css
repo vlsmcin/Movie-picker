@@ -15,21 +15,15 @@ a,
   padding: 3px;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+h2 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--color-text);
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+@media (hover: hover) {
+  a:hover {
+    transform: scale(1.05);
+    cursor: pointer;
   }
 }

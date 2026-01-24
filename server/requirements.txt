@@ -1,2 +1,5 @@
 Django
+djangorestframework
+djangorestframework-simplejwt
 psycopg[binary]
+requests
