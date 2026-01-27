@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import authService from '@/services/authService'
+import usersService from '@/services/usersService'
 
 export const useUserAuthStore = defineStore('userAuth', {
   state: () => ({
@@ -12,14 +12,22 @@ export const useUserAuthStore = defineStore('userAuth', {
   },
 
   actions: {
-    async login(username: string, email: string, password: string) {
+    async login(email: string, password: string) {
       try {
-        const token = await authService.login(username, email, password)
+        const token = await usersService.login(email, password)
         this.token = token
         localStorage.setItem('token', token)
-        this.user = { name: username, email }
+        this.user = { name: email, email }
       } catch (error) {
         throw new Error('Login failed')
+      }
+    },
+
+    async register(name: string, email: string, password: string) {
+      try {
+        await usersService.register(name, email, password)
+      } catch (error) {
+        throw new Error('Registration failed')
       }
     },
 
