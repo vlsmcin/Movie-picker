@@ -19,9 +19,9 @@
             showToast.value = true;
             toastMessage.value = 'Login bem-sucedido!';
             type.value = 'success';
-            // Redirect or show success message
+            
+            router.push('/');
         } catch (error) {
-            // Handle login error
             console.error(error);
             showToast.value = true;
             type.value = 'error';
