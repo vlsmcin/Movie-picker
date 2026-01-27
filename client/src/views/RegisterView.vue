@@ -23,7 +23,6 @@
             showToast.value = true;
             type.value = 'success';
             toastMessage.value = 'Registro bem-sucedido!';
-            router.push('/login');
         } catch (error) {
             console.error(error);
             showToast.value = true;
@@ -73,10 +72,18 @@
 
         register();
     }
+
+    const handleToastClose = () => {
+        showToast.value = false;
+
+        if (type.value === 'success') {
+            router.push('/login');
+        }
+    };
 </script>
 
 <template>
-    <Toast v-if="showToast" :message="toastMessage" @close="showToast = false" :type="type"/>
+    <Toast v-if="showToast" :message="toastMessage" @close="handleToastClose" :type="type"/>
     <div class="register-view">
         <h1 class="title">Registrar-se</h1>
         <input type="text" placeholder="Usuário" v-model="username" />

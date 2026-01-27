@@ -5,9 +5,9 @@
     import Toast from '@/components/Toast.vue';
 
     const userAuthStore = useUserAuthStore();
-    const email = ref('');
+    const username = ref('');
     const password = ref('');
-    const emptyEmail = ref(false);
+    const emptyUsername = ref(false);
     const emptyPassword = ref(false);
     const showToast = ref(false);
     const toastMessage = ref('');
@@ -15,12 +15,10 @@
 
     const login = async () => {
         try {
-            await userAuthStore.login(email.value, password.value);
+            await userAuthStore.login(username.value, password.value);
             showToast.value = true;
             toastMessage.value = 'Login bem-sucedido!';
             type.value = 'success';
-            
-            router.push('/');
         } catch (error) {
             console.error(error);
             showToast.value = true;
@@ -30,10 +28,10 @@
     };
 
     const handleLogin = () => {
-        if (!email.value) {
-            emptyEmail.value = true;
+        if (!username.value) {
+            emptyUsername.value = true;
         } else {
-            emptyEmail.value = false;
+            emptyUsername.value = false;
         }
 
         if (!password.value) {
@@ -42,7 +40,7 @@
             emptyPassword.value = false;
         }
 
-        if (emptyEmail.value || emptyPassword.value) {
+        if (emptyUsername.value || emptyPassword.value) {
             showToast.value = true;
             type.value = 'error';
             toastMessage.value = 'Por favor, preencha todos os campos obrigatórios.';
@@ -51,13 +49,21 @@
         
         login();
     }
+
+    const handleToastClose = () => {
+        showToast.value = false;
+
+        if (type.value === 'success') {
+            router.push('/');
+        }
+    };
 </script>
 
 <template>
-    <Toast v-if="showToast" :message="toastMessage" @close="showToast = false" :type="type"/>
+    <Toast v-if="showToast" :message="toastMessage" @close="handleToastClose" :type="type"/>
     <div class="login-view">
         <h1 class="title">Login</h1>
-        <input :class="{'empty-email': emptyEmail}" type="text" placeholder="Email" v-model="email" />
+        <input :class="{'empty-username': emptyUsername}" type="text" placeholder="Usuário" v-model="username" />
         <input :class="{'empty-password': emptyPassword}" type="password" placeholder="Senha" v-model="password" />
         <button class="login-options" @click="handleLogin">Entrar</button>
         <button class="login-options" @click="() => router.push('/register')">Cadastrar-se</button>
@@ -99,7 +105,7 @@
         background-color: #474745;
     }
 
-    .empty-email, .empty-password {
+    .empty-username, .empty-password {
         border: 1px solid red;
         border-radius: 5px;
     }
