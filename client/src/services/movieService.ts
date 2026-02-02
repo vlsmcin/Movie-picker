@@ -1,15 +1,35 @@
 import type { Movie } from "@/types/movie";
+import api from "./axios";
 
 class movieService {
-    private static apiUrl = 'http://localhost:8000/api/movies'
+    public static async getMoviesForUser(): Promise<Movie[]> {
+        try {
+            const response = await api.get(`/me/movies`)
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching movies for user:", error);
+            throw error;
+        }
+    }
 
-    public static getMoviesForUser(userId: string): Promise<Movie[]> {
-        return fetch(`${this.apiUrl}/user/${userId}`).then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch movies');
-            }
-            return response.json();
-        });
+    public static async addMovieForUser(movie: Movie): Promise<Movie> {
+        try {
+            const response = await api.post(`/me/movies`, movie.id);
+            return response.data;
+        } catch (error) {
+            console.error("Error adding movie for user:", error);
+            throw error;
+        }
+    }
+
+    public static async getMoviesByTitle(title: string): Promise<Movie[]> {
+        try {
+            const response = await api.get(`?title=${encodeURIComponent(title)}`);
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching movies by title:", error);
+            throw error;
+        }
     }
 }
 
