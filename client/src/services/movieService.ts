@@ -14,7 +14,7 @@ class movieService {
 
     public static async addMovieForUser(movie: Movie): Promise<Movie> {
         try {
-            const response = await api.post(`/me/movies`, movie.id);
+            const response = await api.post(`/me/movies`, { id: movie.id });
             return response.data;
         } catch (error) {
             console.error("Error adding movie for user:", error);
@@ -24,7 +24,7 @@ class movieService {
 
     public static async getMoviesByTitle(title: string): Promise<Movie[]> {
         try {
-            const response = await api.get(`?title=${encodeURIComponent(title)}`);
+            const response = await api.get(`/movies/${encodeURIComponent(title)}`);
             return response.data;
         } catch (error) {
             console.error("Error fetching movies by title:", error);

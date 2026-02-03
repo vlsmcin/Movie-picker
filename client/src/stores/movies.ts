@@ -11,23 +11,18 @@ export const useMoviesStore = defineStore("movies", {
     getAllMovies: (state) => state.movies,
     getMoviesByGenre: (state) => (genre: string) =>
       state.movies.filter((movie) => movie.genres.includes(genre)),
-    getMovieByTitle: (state) => (title: string) =>
-      state.movies.find((movie) => movie.title === title),
   },
 
   actions: {
-    addMovie(movie: Movie) {
-      movieService.addMovieForUser(movie).then((addedMovie) => {
+    async addMovie(movie: Movie): Promise<any> {
+      const response = await movieService.addMovieForUser(movie).then((addedMovie) => {
         this.movies.push(addedMovie);
       });
+      return response;
     },
 
-    //removeMovie(movieId: string) {
-    //  
-    //},
-
-    async fetchMoviesForUser() {
-      this.movies = await movieService.getMoviesForUser();
+    async fetchMoviesByTitle(title: string) {
+      this.movies = await movieService.getMoviesByTitle(title);
     }
   },
 });
