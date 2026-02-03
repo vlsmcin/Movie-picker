@@ -36,20 +36,29 @@
         
     }
 
-    const handleAddMovies = () => {
-        selectedMovies.value.forEach(async (movie) => {
-            const response = await moviesStore.addMovie(movie);
-            console.log(response);
-            if (response) {
+    const handleAddMovies = async () => {
+        successFullAdd.value = false;
+        failedAdd.value = false;
+
+        for (const movie of selectedMovies.value) {
+            try {
+                const watched = router.currentRoute.value.name === 'home';
+                const in_watchlist = router.currentRoute.value.name === 'watched';
+
+                await moviesStore.addMovie(movie, watched, in_watchlist);
                 successFullAdd.value = true;
-            } else {
+
+            } catch (err) {
                 failedAdd.value = true;
-            }   
-        });
+                console.error(err);
+            }
+        }
+
         showMovieModal.value = false;
         selectedMovies.value = [];
         isMovieSelected.value = false;
-    }
+    };
+
 
     const handleMovieSelect = (movie: Movie) => {
         const alreadySelected = selectedMovies.value.find(m => m.id === movie.id);

@@ -14,8 +14,8 @@ export const useMoviesStore = defineStore("movies", {
   },
 
   actions: {
-    async addMovie(movie: Movie): Promise<any> {
-      const response = await movieService.addMovieForUser(movie).then((addedMovie) => {
+    async addMovie(movie: Movie, watched: boolean, in_watchlist: boolean): Promise<any> {
+      const response = await movieService.addMovieForUser(movie, watched, in_watchlist).then((addedMovie) => {
         this.movies.push(addedMovie);
       });
       return response;

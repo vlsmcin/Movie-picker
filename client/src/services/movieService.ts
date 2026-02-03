@@ -4,7 +4,7 @@ import api from "./axios";
 class movieService {
     public static async getMoviesForUser(): Promise<Movie[]> {
         try {
-            const response = await api.get(`/me/movies`)
+            const response = await api.get(`/users/me/movies/`);
             return response.data;
         } catch (error) {
             console.error("Error fetching movies for user:", error);
@@ -12,9 +12,14 @@ class movieService {
         }
     }
 
-    public static async addMovieForUser(movie: Movie): Promise<Movie> {
+    public static async addMovieForUser(movie: Movie, watched: boolean, in_watchlist: boolean): Promise<Movie> {
         try {
-            const response = await api.post(`/me/movies`, { id: movie.id });
+            const response = await api.post(`/users/me/movies/`, {
+                movie_id: movie.id,
+                watched: watched,
+                in_watchlist: in_watchlist
+            });
+            
             return response.data;
         } catch (error) {
             console.error("Error adding movie for user:", error);
