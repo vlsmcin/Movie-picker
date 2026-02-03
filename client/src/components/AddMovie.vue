@@ -104,6 +104,7 @@
     </div>
   </div>
   <Toast v-if="successFullAdd" message="Filme(s) adicionado(s) com sucesso!" @close="successFullAdd = false" type="success"/>
+  <Toast v-if="failedAdd" message="Falha ao adicionar filme(s). Tente novamente." @close="failedAdd = false" type="error"/>
 </template>
 
 <style scoped>
