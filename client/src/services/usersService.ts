@@ -8,7 +8,10 @@ class usersService {
             password,
         });
 
-        return data.token;
+        return {
+            access: data.access,
+            refresh: data.refresh,
+        };
     }
 
     static async register(username: string, email: string, password: string) {

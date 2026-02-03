@@ -34,7 +34,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const isLogged = localStorage.getItem('token')
+  const isLogged = localStorage.getItem('refresh')
 
   if (to.meta.requiresAuth && !isLogged) {
     next('/login')

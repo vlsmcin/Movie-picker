@@ -3,7 +3,7 @@ import usersService from '@/services/usersService'
 
 export const useUserAuthStore = defineStore('userAuth', {
   state: () => ({
-    token: localStorage.getItem('token') || '',
+    token: localStorage.getItem('access') || '',
     user: null as { username: string; email: string } | null,
   }),
 
@@ -15,8 +15,9 @@ export const useUserAuthStore = defineStore('userAuth', {
     async login(username: string, password: string) {
       try {
         const token = await usersService.login(username, password)
-        this.token = token
-        localStorage.setItem('token', token)
+        this.token = token.access
+        localStorage.setItem('access', token.access)
+        localStorage.setItem('refresh', token.refresh)
         this.user = { username, email: '' }
       } catch (error) {
         throw new Error('Login failed')
@@ -34,7 +35,8 @@ export const useUserAuthStore = defineStore('userAuth', {
     logout() {
       this.token = ''
       this.user = null
-      localStorage.removeItem('token')
+      localStorage.removeItem('access')
+      localStorage.removeItem('refresh')
     },
   },
 })
