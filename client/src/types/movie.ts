@@ -6,6 +6,10 @@ export type Movie = {
     release_date: string;
     poster_path: string;
     genres: string[];
+}
+
+export type UserMovie = {
+    movie: Movie;
     watched: boolean;
     in_watchlist: boolean;
 }

@@ -1,8 +1,8 @@
-import type { Movie } from "@/types/movie";
+import type { Movie, UserMovie } from "@/types/movie";
 import api from "./axios";
 
 class movieService {
-    public static async getMoviesForUser(): Promise<Movie[]> {
+    public static async getMoviesForUser(): Promise<UserMovie[]> {
         try {
             const response = await api.get(`/users/me/movies/`);
             return response.data;
@@ -12,12 +12,12 @@ class movieService {
         }
     }
 
-    public static async addMovieForUser(movie: Movie, watched: boolean, in_watchlist: boolean): Promise<Movie> {
+    public static async addMovieForUser(userMovie: UserMovie): Promise<UserMovie> {
         try {
             const response = await api.post(`/users/me/movies/`, {
-                movie_id: movie.id,
-                watched: watched,
-                in_watchlist: in_watchlist
+                movie_id: userMovie.movie.id,
+                watched: userMovie.watched,
+                in_watchlist: userMovie.in_watchlist
             });
             
             return response.data;
