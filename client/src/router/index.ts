@@ -7,8 +7,20 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
+      path: '/watchlist',
+      name: 'watchlist',
+      component: HomeView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/watched',
+      name: 'watched',
+      component: HomeView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/pickmovie',
+      name: 'pickmovie',
       component: HomeView,
       meta: { requiresAuth: true },
     },
@@ -39,7 +51,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isLogged) {
     next('/login')
   } else if (to.path === '/login' && isLogged) {
-    next('/')
+    next('/watchlist')
   } else {
     next()
   }

@@ -11,7 +11,7 @@
     const userMovies = ref<Array<UserMovie>>([]);
     const genres = ref<Set<string>>(new Set());
     const route = useRoute();
-    const inWatchListOption = computed(() => route.name === 'home' ? true : false);
+    const inWatchListOption = computed(() => route.name === 'watchlist' ? true : false);
     
     const filteredMovies = computed(() => {
         return userMovies.value.filter(um =>

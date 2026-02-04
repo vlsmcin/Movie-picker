@@ -54,7 +54,7 @@
         showToast.value = false;
 
         if (type.value === 'success') {
-            router.push('/');
+            router.push('/watchlist');
         }
     };
 </script>
