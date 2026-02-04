@@ -1,7 +1,10 @@
 <script lang="ts" setup>
-    import { ref } from 'vue';
+    import { ref, computed } from 'vue';
+    import { useRoute } from 'vue-router';
 
     const dropdownUserVisible = ref(false);
+    const route = useRoute();
+    const currentRoute = computed(() => route.name);
 
     function toggleDropdownUser() {
         dropdownUserVisible.value = !dropdownUserVisible.value;
@@ -10,9 +13,9 @@
 
 <template>
     <header class="home-header">
-        <a>Escolher filme</a>
-        <a>Minha lista</a>
-        <a>Filmes assistidos</a>
+        <RouterLink to="/pickmovie" :class="{ 'option-selected': currentRoute === 'pickmovie' }">Escolher filme</RouterLink>
+        <RouterLink to="/watchlist" :class="{ 'option-selected': currentRoute === 'watchlist' }">Minha lista</RouterLink>
+        <RouterLink to="/watched" :class="{ 'option-selected': currentRoute === 'watched' }">Filmes assistidos</RouterLink>
         <img src="@/assets/empty_user.svg" alt="Avatar" class="profile-avatar" @click="toggleDropdownUser"/>
 
         <div v-if="dropdownUserVisible" class="dropdownUserMenu">
@@ -66,5 +69,9 @@
         padding: 1rem;
         display: flex;
         flex-direction: column;
+    }
+
+    .option-selected {
+        color: var(--color-primary);
     }
 </style>
