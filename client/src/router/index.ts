@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
+import MovieListView from '@/views/MovieListView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 
@@ -9,19 +9,19 @@ const router = createRouter({
     {
       path: '/watchlist',
       name: 'watchlist',
-      component: HomeView,
+      component: MovieListView,
       meta: { requiresAuth: true },
     },
     {
       path: '/watched',
       name: 'watched',
-      component: HomeView,
+      component: MovieListView,
       meta: { requiresAuth: true },
     },
     {
       path: '/pickmovie',
       name: 'pickmovie',
-      component: HomeView,
+      component: MovieListView,
       meta: { requiresAuth: true },
     },
     {
