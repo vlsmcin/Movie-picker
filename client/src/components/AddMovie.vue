@@ -1,17 +1,20 @@
 <script lang="ts" setup>
-    import router from '@/router';
     import { ref, watch } from 'vue';
     import type { Movie } from '@/types/movie';
-    import { useMoviesStore } from '@/stores/movies';
+    import { useUserMoviesStore } from '@/stores/movies';
+    import type { UserMovie } from '@/types/movie';
+    import movieService from '@/services/movieService';
     import Toast from './Toast.vue';
+    import { useRoute } from 'vue-router';
+    import router from '@/router';
 
     const showMovieModal = ref(false);
-    const actualPage = router.currentRoute.value.name;
     const selectedMovies = ref<Movie[]>([]);
-    const moviesStore = useMoviesStore();
+    const userMoviesStore = useUserMoviesStore();
     const isMovieSelected = ref(false);
     const searchTitle = ref('');
     const searchResults = ref<Movie[]>([]);
+    const route = useRoute();
 
     let timeout: ReturnType<typeof setTimeout>;
 
@@ -27,25 +30,25 @@
         }
 
         timeout = setTimeout(async () => {
-            await moviesStore.fetchMoviesByTitle(newTitle);
-            searchResults.value = moviesStore.movies;
+            searchResults.value = await movieService.getMoviesByTitle(newTitle);
         }, 500);
     });
-        
-    if (actualPage === '/') {
-        
-    }
 
     const handleAddMovies = async () => {
         successFullAdd.value = false;
         failedAdd.value = false;
+        const in_watchlist = route.name === 'home';
+        const watched = route.name === 'watched';
 
         for (const movie of selectedMovies.value) {
             try {
-                const watched = router.currentRoute.value.name === 'home';
-                const in_watchlist = router.currentRoute.value.name === 'watched';
+                const userMovie: UserMovie = {
+                    movie,
+                    watched,
+                    in_watchlist
+                };
 
-                await moviesStore.addMovie(movie, watched, in_watchlist);
+                await userMoviesStore.addMovie(userMovie);
                 successFullAdd.value = true;
 
             } catch (err) {
@@ -54,6 +57,7 @@
             }
         }
 
+        router.go(0);
         showMovieModal.value = false;
         selectedMovies.value = [];
         isMovieSelected.value = false;
