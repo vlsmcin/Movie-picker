@@ -20,6 +20,10 @@
         );
     });
 
+    const emptyMessage = computed(() => {
+        return inWatchListOption.value ? "Nenhum filme na lista de desejos" : "Nenhum filme assistido";
+    });
+
     console.log("In watchlist option:", inWatchListOption.value);
     
     function getGenresFromMovies(movies: Array<Movie>): Set<string> {
@@ -51,6 +55,7 @@
 
 <template>
     <HomeHeader />
+    <h2 id="Central" v-if="filteredMovies.length === 0">{{ emptyMessage }}</h2>
     <div v-for="genre in genres" :key="genre">
         <h2 class="section-title">{{ genre }}</h2>
         <div class="card">
@@ -80,5 +85,11 @@
     .section-title {
         margin: 2rem;
         border-bottom: 2px solid rgba(0, 128, 0, 0.2);
+    }
+
+    #Central {
+        text-align: center;
+        margin-top: 3rem;
+        color: gray;
     }
 </style>
