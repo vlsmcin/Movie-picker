@@ -30,7 +30,8 @@ def fetch_and_store(movie_title):
                     'vote_count': mv['vote_count'],
                     'release_date': parse_date(mv['release_date']),
                     'popularity': mv['popularity'],
-                    'poster_path': mv['poster_path']
+                    'poster_path': mv['poster_path'],
+                    'backdrop_path': mv.get('backdrop_path'),
                 }
             )
 
