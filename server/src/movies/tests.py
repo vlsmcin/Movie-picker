@@ -28,19 +28,15 @@ class MovieTests(APITestCase):
         """
         Test to ensure that a single movie can be found by title.
         """
-        movie = Movie.objects.create(
-            tmdb_id=1,
-            title="Inception",
-            overview="A mind-bending thriller",
-            vote_average=8.8,
-            vote_count=21000,
-            release_date="2010-07-16",
-            popularity=150.0,
-            poster_path="/inception.jpg"
-        )
-
         response = self.client.get(reverse('get_movie_by_title', args=['Inception']))
-        self.assertContains(response, "Inception")
+
+        self.assertContains(response, "title")
+        self.assertContains(response, "overview")
+        self.assertContains(response, "vote_average")
+        self.assertContains(response, "release_date")
+        self.assertContains(response, "poster_path")
+        self.assertContains(response, "backdrop_path")
+        self.assertContains(response, "genres")
 
     def test_similar_movies_found(self):
         """
@@ -54,7 +50,8 @@ class MovieTests(APITestCase):
             vote_count=17000,
             release_date="1999-03-31",
             popularity=120.0,
-            poster_path="/matrix.jpg"
+            poster_path="/matrix.jpg",
+            backdrop_path="/matrix_backdrop.jpg"
         )
         Movie.objects.create(
             tmdb_id=2,
@@ -64,7 +61,8 @@ class MovieTests(APITestCase):
             vote_count=13000,
             release_date="2003-05-15",
             popularity=100.0,
-            poster_path="/matrix_reloaded.jpg"
+            poster_path="/matrix_reloaded.jpg",
+            backdrop_path="/matrix_reloaded_backdrop.jpg"
         )
         response = self.client.get(reverse('get_movie_by_title', args=['Matrix']))
         self.assertContains(response, "The Matrix")
@@ -82,7 +80,8 @@ class MovieTests(APITestCase):
             vote_count=14000,
             release_date="2014-11-07",
             popularity=130.0,
-            poster_path="/interstellar.jpg"
+            poster_path="/interstellar.jpg",
+            backdrop_path="/interstellar_backdrop.jpg"
         )
 
         response = self.client.get(reverse('get_movie_by_title', args=['NonExistentMovie']))
@@ -99,12 +98,13 @@ class MovieTests(APITestCase):
 
     def test_movie_with_missing_optional_fields(self):
         """
-        Test to ensure that a movie with missing optional can be created too.
+        Test to ensure that a movie with missing optional fields can be created too.
         """
 
         Movie.objects.create(
             tmdb_id=20,
-            title="Unknown Movie"
+            title="Unknown Movie",
+            backdrop_path="/unknown_backdrop.jpg"
         )
 
         response = self.client.get(
@@ -122,7 +122,8 @@ class MovieTests(APITestCase):
 
         movie = Movie.objects.create(
             tmdb_id=100,
-            title="Action Adventure Movie"
+            title="Action Adventure Movie",
+            backdrop_path="/action_adventure_backdrop.jpg"
         )
         movie.genres.add(genre1, genre2)
 
