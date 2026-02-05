@@ -135,10 +135,37 @@ class MovieTests(APITestCase):
         self.assertContains(response, "Adventure")
 
 class GenreTests(APITestCase):
+    def setUp(self):
+        """
+        Set up authentication for the tests, and add all genres to the database.
+        """
+        self.user = User.objects.create_user(
+            username='movielover',
+            email='movielover@example.com',
+            password='movieloverpassword'
+        )
+
+        response = self.client.post(reverse('user-login'), {
+            'username': 'movielover',
+            'password': 'movieloverpassword'
+        })
+
+        self.token = response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
+
+        call_command('fill_genres')
+
     def test_all_genres_registered(self):
         """
         Test to ensure that all genres are registered in the database.
         """
-        call_command('fill_genres')
         genres = Genre.objects.all()
         self.assertEqual(genres.count(), 19)
+
+    def test_genre_list_endpoint(self):
+        """
+        Test to ensure that the genre list endpoint returns all genres.
+        """
+        response = self.client.get(reverse('get_genre_list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 19)

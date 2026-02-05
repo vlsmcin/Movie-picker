@@ -20,3 +20,8 @@ class MovieSerializer(serializers.ModelSerializer):
             "backdrop_path",
             "genres",
         ]
+
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genre
+        fields = ["name"]
