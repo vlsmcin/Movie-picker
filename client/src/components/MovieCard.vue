@@ -1,25 +1,26 @@
 <script setup lang="ts">
+    import type { Movie } from '@/types/movie';
+
     defineProps<{
         link:string,
-        moviename:string
+        movie: Movie
     }>()
 </script>
 
 <template>
-    <RouterLink :to="`/movie/${moviename}`" class="card">
+    <RouterLink :to="`/movie/${movie.id}`" class="card">
         <img class="movie-image" :src="link"/>
-        <p class="movie-text">{{ moviename }}</p>
+        <p class="movie-text">{{ movie.title }}</p>
     </RouterLink>
 </template>
 
 <style scoped>
-    .card {        
+    .card {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        width: 10rem;
-        height: 15rem;
+        width: 12.5rem;
         border: 2px solid var(--color-border);
         border-radius: 10px;
         padding: 1rem;
