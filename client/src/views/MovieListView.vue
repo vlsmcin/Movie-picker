@@ -6,10 +6,14 @@
     import type { Movie } from '@/types/movie';
     import { onMounted, ref, computed } from 'vue';
     import type { UserMovie } from '@/types/movie';
+    import { useUserMoviesStore } from '@/stores/movies';
     import { useRoute } from 'vue-router';
 
-    const userMovies = ref<Array<UserMovie>>([]);
-    const genres = ref<Set<string>>(new Set());
+    const userMoviesStore = useUserMoviesStore();
+    const userMovies = computed(() => userMoviesStore.userMovies);
+    const genres = computed(() => 
+        getGenresFromMovies(userMovies.value.map(um => um.movie))
+    );
     const route = useRoute();
     const inWatchListOption = computed(() => route.name === 'watchlist' ? true : false);
     
@@ -47,9 +51,8 @@
     }
 
     onMounted(async () => {
-        const moviesData = await movieService.getMoviesForUser();
-        userMovies.value = moviesData;
-        genres.value = getGenresFromMovies(moviesData.map(m => m.movie));
+        await userMoviesStore.fetchMoviesIfEmpty();
+        console.log("Movies fetched on mounted:", userMoviesStore.userMovies);
     });
 </script>
 
@@ -58,22 +61,22 @@
     <h2 id="Central" v-if="filteredMovies.length === 0">{{ emptyMessage }}</h2>
     <div v-for="genre in genres" :key="genre">
         <h2 class="section-title">{{ genre }}</h2>
-        <div class="card">
+        <div class="cards">
             <MovieCard
                 v-for="userMovie in filteredMovies.filter(
                     um => um.movie.genres.includes(genre)
                     )"
                 :key="userMovie.movie.id"
                 :link="`https://image.tmdb.org/t/p/w200${userMovie.movie.poster_path}`"
-                :moviename="userMovie.movie.title"
+                :movie="userMovie.movie"
                 />
         </div>
     </div>
     <AddMovie/>
 </template>
 
-<style>
-    .card {
+<style scoped>
+    .cards {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;

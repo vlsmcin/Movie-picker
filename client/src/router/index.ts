@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import MovieListView from '@/views/MovieListView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
+import MovieView from '@/views/MovieView.vue'
+import { useUserMoviesStore } from '@/stores/movies'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,6 +25,27 @@ const router = createRouter({
       name: 'pickmovie',
       component: MovieListView,
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/movie/:movieId',
+      name: 'movie',
+      component: MovieView,
+      meta: { requiresAuth: true },
+      beforeEnter: async(to) => {
+        const moviesStore = useUserMoviesStore();
+
+        await moviesStore.fetchMoviesIfEmpty();
+        console.log("Movies in store before entering movie route:", moviesStore.userMovies);
+
+        const id = to.params.movieId as string;
+        const movie = moviesStore.getMovieById(id);
+
+        console.log("Before entering movie route, movie found:", movie);
+
+        if (!movie) {
+          return { name: 'not-found' };
+        }
+      }
     },
     {
       path: '/login',
