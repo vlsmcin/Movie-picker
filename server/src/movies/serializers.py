@@ -17,5 +17,6 @@ class MovieSerializer(serializers.ModelSerializer):
             "vote_average",
             "release_date",
             "poster_path",
+            "backdrop_path",
             "genres",
         ]
