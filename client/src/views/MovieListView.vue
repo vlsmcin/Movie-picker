@@ -1,11 +1,9 @@
 <script setup lang="ts">
     import HomeHeader from '@/components/HomeHeader.vue';
     import MovieCard from '@/components/MovieCard.vue';
-    import movieService from '@/services/movieService';
     import AddMovie from '@/components/AddMovie.vue';
     import type { Movie } from '@/types/movie';
-    import { onMounted, ref, computed } from 'vue';
-    import type { UserMovie } from '@/types/movie';
+    import { onMounted, computed } from 'vue';
     import { useUserMoviesStore } from '@/stores/movies';
     import { useRoute } from 'vue-router';
 
@@ -19,8 +17,7 @@
     
     const filteredMovies = computed(() => {
         return userMovies.value.filter(um =>
-            um.watched === !inWatchListOption.value &&
-            um.in_watchlist === inWatchListOption.value
+            inWatchListOption.value ? um.in_watchlist : um.watched
         );
     });
 
@@ -28,31 +25,19 @@
         return inWatchListOption.value ? "Nenhum filme na lista de desejos" : "Nenhum filme assistido";
     });
 
-    console.log("In watchlist option:", inWatchListOption.value);
     
     function getGenresFromMovies(movies: Array<Movie>): Set<string> {
         const genresSet = new Set<string>();
         
-        if (!inWatchListOption.value) {
-            movies = movies.filter(movie => {
-                return userMovies.value.some(um => um.movie.id === movie.id && um.watched);
-            });
-        }
-        else {
-            movies = movies.filter(movie => {
-                return userMovies.value.some(um => um.movie.id === movie.id && um.in_watchlist);
-            });
-        }
-        
-        movies.forEach(movie => {
-            movie.genres.forEach(genre => genresSet.add(genre));
+        filteredMovies.value.forEach(um => {
+            um.movie.genres.forEach(genre => genresSet.add(genre));
         });
+
         return genresSet;
     }
 
     onMounted(async () => {
         await userMoviesStore.fetchMoviesIfEmpty();
-        console.log("Movies fetched on mounted:", userMoviesStore.userMovies);
     });
 </script>
 
