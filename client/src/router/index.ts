@@ -1,16 +1,51 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
+import MovieListView from '@/views/MovieListView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
+import MovieView from '@/views/MovieView.vue'
+import { useUserMoviesStore } from '@/stores/movies'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: HomeView,
+      path: '/watchlist',
+      name: 'watchlist',
+      component: MovieListView,
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/watched',
+      name: 'watched',
+      component: MovieListView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/pickmovie',
+      name: 'pickmovie',
+      component: MovieListView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/movie/:movieId',
+      name: 'movie',
+      component: MovieView,
+      meta: { requiresAuth: true },
+      beforeEnter: async(to) => {
+        const moviesStore = useUserMoviesStore();
+
+        await moviesStore.fetchMoviesIfEmpty();
+        console.log("Movies in store before entering movie route:", moviesStore.userMovies);
+
+        const id = to.params.movieId as string;
+        const movie = moviesStore.getMovieById(id);
+
+        console.log("Before entering movie route, movie found:", movie);
+
+        if (!movie) {
+          return { name: 'not-found' };
+        }
+      }
     },
     {
       path: '/login',
@@ -34,12 +69,12 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const isLogged = localStorage.getItem('token')
+  const isLogged = localStorage.getItem('refresh')
 
   if (to.meta.requiresAuth && !isLogged) {
     next('/login')
   } else if (to.path === '/login' && isLogged) {
-    next('/')
+    next('/watchlist')
   } else {
     next()
   }

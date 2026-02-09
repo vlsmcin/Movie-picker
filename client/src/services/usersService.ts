@@ -1,19 +1,21 @@
 import axios from 'axios';
+import api from './axios';
 
 class usersService {
-    static apiUrl = 'http://localhost:8000/api/v1';
-
     static async login(username: string, password: string) {
-        const { data } = await axios.post(`${this.apiUrl}/auth/login/`, {
+        const { data } = await api.post(`/auth/login/`, {
             username,
             password,
         });
 
-        return data.token;
+        return {
+            access: data.access,
+            refresh: data.refresh,
+        };
     }
 
     static async register(username: string, email: string, password: string) {
-        const { data } = await axios.post(`${this.apiUrl}/users/`, {
+        const { data } = await api.post(`/users/`, {
             username,
             email,
             password,
