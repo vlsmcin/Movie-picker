@@ -1,5 +1,5 @@
 import type { Movie, UserMovie } from "@/types/movie";
-import api from "./axios";
+import { api } from "./axios";
 
 class movieService {
     public static async getMoviesForUser(): Promise<UserMovie[]> {

@@ -5,10 +5,13 @@ export const useUserAuthStore = defineStore('userAuth', {
   state: () => ({
     token: localStorage.getItem('access') || '',
     user: null as { username: string; email: string } | null,
+    initialized: false,
   }),
 
   getters: {
-    isLoggedIn: (state) => !!state.token,
+    isLoggedIn: (state) => {
+      return !!state.token || !!localStorage.getItem('refresh');
+    },
   },
 
   actions: {
@@ -32,11 +35,30 @@ export const useUserAuthStore = defineStore('userAuth', {
       }
     },
 
+    async tryRestoreSession() {
+      const refresh = localStorage.getItem('refresh')
+      if (!refresh) {
+        this.initialized = true
+        return
+      }
+
+      try {
+        const res = await usersService.refresh(refresh)
+        this.token = res.access
+        localStorage.setItem('access', res.access)
+      } catch (error) {
+        this.logout()
+      } finally {
+        this.initialized = true
+      }
+    },
+
     logout() {
       this.token = ''
       this.user = null
       localStorage.removeItem('access')
       localStorage.removeItem('refresh')
+      localStorage.clear()
     },
   },
 })
