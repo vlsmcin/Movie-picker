@@ -40,6 +40,17 @@ export const useUserMoviesStore = defineStore("movies", {
           this.isLoading = false;
         }
       }
-    }
+    },
+    async updateUserMovie(userMovie: UserMovie) {
+      try {
+        const updatedMovie = await movieService.updateUserMovie(userMovie);
+        const index = this.userMovies.findIndex((um) => String(um.movie.id) === String(updatedMovie.movie.id));
+        if (index !== -1) {
+          this.userMovies[index] = updatedMovie;
+        }
+      } catch (error) {
+        console.error("Failed to update user movie:", error);
+      }
+    },
   },
 });

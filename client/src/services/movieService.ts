@@ -36,6 +36,21 @@ class movieService {
             throw error;
         }
     }
+
+    public static async updateUserMovie(userMovie: UserMovie): Promise<UserMovie> {
+        try {
+            const response = await api.patch(`/users/me/movies/`, {
+                movie_id: userMovie.movie.id,
+                watched: userMovie.watched,
+                in_watchlist: userMovie.in_watchlist
+            });
+            
+            return response.data;
+        } catch (error) {
+            console.error("Error updating user movie:", error);
+            throw error;
+        }
+    }
 }
 
 export default movieService;
