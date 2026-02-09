@@ -37,7 +37,7 @@
     const handleAddMovies = async () => {
         successFullAdd.value = false;
         failedAdd.value = false;
-        const in_watchlist = route.name === 'home';
+        const in_watchlist = route.name === 'watchlist';
         const watched = route.name === 'watched';
 
         for (const movie of selectedMovies.value) {
