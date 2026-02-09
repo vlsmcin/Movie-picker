@@ -4,6 +4,7 @@ import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import MovieView from '@/views/MovieView.vue'
 import { useUserMoviesStore } from '@/stores/movies'
+import { useUserAuthStore } from '@/stores/user'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -68,15 +69,17 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
-  const isLogged = localStorage.getItem('refresh')
+router.beforeEach(async (to) => {
+  const auth = useUserAuthStore();
 
-  if (to.meta.requiresAuth && !isLogged) {
-    next('/login')
-  } else if (to.path === '/login' && isLogged) {
-    next('/watchlist')
-  } else {
-    next()
+  if (!auth.initialized) {
+    await auth.tryRestoreSession();
+  }
+
+  if (to.meta.requiresAuth && !auth.isLoggedIn) {
+    return '/login'
+  } else if (to.path === '/login' && auth.isLoggedIn) {
+    return '/watchlist'
   }
 })
 
