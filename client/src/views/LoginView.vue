@@ -61,13 +61,13 @@
 
 <template>
     <Toast v-if="showToast" :message="toastMessage" @close="handleToastClose" :type="type"/>
-    <div class="login-view">
+    <form class="login-view" @submit.prevent="handleLogin">
         <h1 class="title">Login</h1>
         <input :class="{'empty-username': emptyUsername}" type="text" placeholder="Usuário" v-model="username" />
         <input :class="{'empty-password': emptyPassword}" type="password" placeholder="Senha" v-model="password" />
-        <button class="login-options" @click="handleLogin">Entrar</button>
-        <button class="login-options" @click="() => router.push('/register')">Cadastrar-se</button>
-    </div>
+        <button class="login-options" type="submit">Entrar</button>
+        <button class="login-options" type="button" @click="() => router.push('/register')">Cadastrar-se</button>
+    </form>
 </template>
 
 <style scoped>
