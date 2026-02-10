@@ -84,15 +84,15 @@
 
 <template>
     <Toast v-if="showToast" :message="toastMessage" @close="handleToastClose" :type="type"/>
-    <div class="register-view">
+    <form class="register-view" @submit.prevent="handleRegister">
         <h1 class="title">Registrar-se</h1>
         <input type="text" placeholder="Usuário" v-model="username" />
         <input type="email" placeholder="Email" v-model="email" />
         <input type="password" placeholder="Senha" v-model="password" />
         <input type="password" placeholder="Confirmar Senha" v-model="passwordConfirm" />
-        <button class="register-options" @click="handleRegister">Cadastrar-se</button>
-        <button class="register-options" @click="() => router.push('/login')">Já tenho uma conta</button>
-    </div>
+        <button class="register-options" type="submit">Cadastrar-se</button>
+        <button class="register-options" type="button" @click="() => router.push('/login')">Já tenho uma conta</button>
+    </form>
 </template>
 
 <style scoped>
